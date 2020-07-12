@@ -3,6 +3,7 @@ package com.ywh.olrn.compiler;
 import javax.tools.*;
 import java.io.ByteArrayOutputStream;
 import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -61,10 +62,14 @@ public class SourceCodeCompiler {
         if (result) {
             return customJavaFileManager.getJavaFileForInput(className);
         }
-        StringBuilder compileErrorRes = new StringBuilder();
-        for (Diagnostic<? extends JavaFileObject> diagnostic : diagnosticCollector.getDiagnostics()) {
-            compileErrorRes.append(diagnostic.toString()).append(System.lineSeparator());
-        }
-        throw new Exception(compileErrorRes.toString());
+//        StringBuilder compileErrorRes = new StringBuilder();
+
+//        for (Diagnostic<? extends JavaFileObject> diagnostic : diagnostics) {
+//            compileErrorRes.append(diagnostic.toString()).append(System.lineSeparator());
+//        }
+//        throw new Exception(compileErrorRes.toString());
+        List<Diagnostic<? extends JavaFileObject>> diagnostics = diagnosticCollector.getDiagnostics();
+        throw new Exception(diagnostics.get(diagnostics.size() - 1).toString());
+
     }
 }

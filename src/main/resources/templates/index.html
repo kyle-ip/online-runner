@@ -9,10 +9,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
 </head>
 <body>
-<div style="padding:25px">
-    <div id="left" style="float:left;width:69%;border:1px solid lightslategray;">
+
+<div style="padding:25px;margin: 0 auto;width: 90%">
+    <h1 class="title">Online Runner</h1>
+    <div id="left" style="float:left;width:59%;border:1px solid lightslategray;">
         <pre>
-Code: <code contenteditable="true" class="textarea is-success" id="sourceCode" style="height: 30vh">${sourceCode!}</code>
+Code: <code contenteditable="true" class="java textarea is-success" id="sourceCode" style="height: 70vh">${sourceCode!}</code>
 System.in: <code contenteditable="true" class="textarea is-success" id="systemIn" name="systemIn" style="height: 5vh">${systemIn!}</code>
 <input class="bttn-simple bttn-sm bttn-primary" id="submmitBtn" type="button" value="Run" style="float:right" onclick="submit()"/>
         </pre>
@@ -24,16 +26,20 @@ System.in: <code contenteditable="true" class="textarea is-success" id="systemIn
             </form>
         </div>
     </div>
-    <div id="right" style="float:right;width:29%;border:1px solid lightslategray">
+    <div id="right" style="float:right;width:39%;border:1px solid lightslategray">
         <pre>
-Result: <code contenteditable="false" id="systemOut">${result!}</code>
+Result: <code contenteditable="false" style="height: 40vh;white-space:normal;word-break:break-all;" id="systemOut" >${result!}</code>
+Runtime: ${runtime!}ms
         </pre>
     </div>
 </div>
 <script>hljs.initHighlightingOnLoad();</script>
 <script>
+
     function submit() {
-        document.getElementById("sourceCodeInput").value = document.getElementById("sourceCode").innerText
+
+        document.getElementById("sourceCodeInput").value =
+            document.getElementById("sourceCode").innerText.replace("&lt;", "<").replace("&gt;", ">")
         document.getElementById("systemInInput").value = document.getElementById("systemIn").innerText
         document.getElementById("runForm").submit();
     }

@@ -1,7 +1,5 @@
 package com.ywh.olrn.compiler;
 
-import com.ywh.olrn.exception.BusinessException;
-
 import javax.tools.*;
 import java.io.ByteArrayOutputStream;
 import java.util.Collections;
@@ -37,7 +35,7 @@ public class SourceCodeCompiler {
      * @param sourceCode            源码字符串
      * @return
      */
-    public static byte[] compile(String sourceCode) {
+    public static byte[] compile(String sourceCode) throws Exception {
 
         // 编译结果收集器（成功/失败信息）
         DiagnosticCollector<JavaFileObject> diagnosticCollector = new DiagnosticCollector<>();
@@ -53,7 +51,7 @@ public class SourceCodeCompiler {
         if (matcher.find()) {
             className = matcher.group(1);
         } else {
-            throw new IllegalArgumentException("No valid class");
+            throw new IllegalArgumentException("No valid class.");
         }
 
         // 执行编译
@@ -67,6 +65,6 @@ public class SourceCodeCompiler {
         for (Diagnostic<? extends JavaFileObject> diagnostic : diagnosticCollector.getDiagnostics()) {
             compileErrorRes.append(diagnostic.toString()).append(System.lineSeparator());
         }
-        throw new BusinessException(compileErrorRes.toString());
+        throw new Exception(compileErrorRes.toString());
     }
 }

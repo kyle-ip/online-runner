@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>online-runner</title>
+    <link href="https://cdn.bootcss.com/bttn.css/0.2.4/bttn.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/bulma/0.7.4/css/bulma.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/a11y-light.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+</head>
+<body>
+<div style="padding:25px">
+    <div id="left" style="float:left;width:69%;border:1px solid lightslategray;">
+        <pre>
+Code: <code contenteditable="true" class="textarea is-success" id="sourceCode" style="height: 30vh">${sourceCode!}</code>
+System.in: <code contenteditable="true" class="textarea is-success" id="systemIn" name="systemIn" style="height: 5vh">${systemIn!}</code>
+<input class="bttn-simple bttn-sm bttn-primary" id="submmitBtn" type="button" value="Run" style="float:right" onclick="submit()"/>
+        </pre>
+
+        <div style="width:100%;text-align:center">
+            <form action="/" method="post" id="runForm">
+                <input type="hidden" name="sourceCode" id="sourceCodeInput"/>
+                <input type="hidden" name="systemIn" id="systemInInput"/>
+            </form>
+        </div>
+    </div>
+    <div id="right" style="float:right;width:29%;border:1px solid lightslategray">
+        <pre>
+Result: <code contenteditable="false" id="systemOut">${result!}</code>
+        </pre>
+    </div>
+</div>
+<script>hljs.initHighlightingOnLoad();</script>
+<script>
+    function submit() {
+        document.getElementById("sourceCodeInput").value = document.getElementById("sourceCode").innerText
+        document.getElementById("systemInInput").value = document.getElementById("systemIn").innerText
+        document.getElementById("runForm").submit();
+    }
+</script>
+</body>
+</html>

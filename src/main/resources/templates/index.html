@@ -9,7 +9,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
 </head>
 <body>
-
 <div style="padding:25px;margin: 0 auto;width: 90%">
     <h1 class="title">Online Runner</h1>
     <div id="left" style="float:left;width:59%;border:1px solid lightslategray;">
@@ -18,7 +17,6 @@ Code: <code contenteditable="true" class="java textarea is-success" id="sourceCo
 System.in: <code contenteditable="true" class="textarea is-success" id="systemIn" name="systemIn" style="height: 5vh">${systemIn!}</code>
 <input class="bttn-simple bttn-sm bttn-primary" id="submmitBtn" type="button" value="Run" style="float:right" onclick="submit()"/>
         </pre>
-
         <div style="width:100%;text-align:center">
             <form action="/" method="post" id="runForm">
                 <input type="hidden" name="sourceCode" id="sourceCodeInput"/>
@@ -35,11 +33,8 @@ Runtime: ${runtime!}ms
 </div>
 <script>hljs.initHighlightingOnLoad();</script>
 <script>
-
     function submit() {
-
-        document.getElementById("sourceCodeInput").value =
-            document.getElementById("sourceCode").innerText.replace("&lt;", "<").replace("&gt;", ">")
+        document.getElementById("sourceCodeInput").value = document.getElementById("sourceCode").innerText.replace("&lt;", "<").replace("&gt;", ">")
         document.getElementById("systemInInput").value = document.getElementById("systemIn").innerText
         document.getElementById("runForm").submit();
     }

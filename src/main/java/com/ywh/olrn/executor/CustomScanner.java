@@ -480,16 +480,12 @@ public final class CustomScanner implements Iterator<String>, Closeable {
         matchValid = false;
         matcher.usePattern(delimPattern);
         matcher.region(position, buf.limit());
-
-        // Skip delims first
         if (matcher.lookingAt()) {
             position = matcher.end();
         }
-
-        // If we are sitting at the end, no more tokens in buffer
-        if (position == buf.limit())
+        if (position == buf.limit()) {
             return false;
-
+        }
         return true;
     }
 
@@ -1420,7 +1416,7 @@ public final class CustomScanner implements Iterator<String>, Closeable {
      */
     private String processFloatToken(String token) {
         String result = token.replaceAll(groupSeparator, "");
-        if (!decimalSeparator.equals("\\.")) {
+        if (!"\\.".equals(decimalSeparator)) {
             result = result.replaceAll(decimalSeparator, ".");
         }
         boolean isNegative = false;

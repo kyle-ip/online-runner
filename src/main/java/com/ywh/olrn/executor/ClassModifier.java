@@ -33,9 +33,9 @@ public class ClassModifier {
      * tag 用 u1 个字节表示
      * len 用 u2 个字节表示
      */
-    private static final int u1 = 1;
+    private static final int U1 = 1;
 
-    private static final int u2 = 2;
+    private static final int U2 = 2;
 
     public byte[] getByteCode() {
         return byteCode;
@@ -53,7 +53,7 @@ public class ClassModifier {
      * @return
      */
     public int getConstantPoolCount() {
-        return byte2Int(byteCode, CONSTANT_POOL_COUNT_INDEX, u2);
+        return byte2Int(byteCode, CONSTANT_POOL_COUNT_INDEX, U2);
     }
 
     /**
@@ -67,26 +67,26 @@ public class ClassModifier {
         // 注意常量数量计数器从 1 开始
         int cpc = getConstantPoolCount();
         // 真实的常量起始位置
-        int offset = CONSTANT_POOL_COUNT_INDEX + u2;
+        int offset = CONSTANT_POOL_COUNT_INDEX + U2;
 
         // 遍历所有常量，找到 CONSTANT_UTF8_INFO
         for (int i = 1; i < cpc; i++) {
 
             // 找到当前常量的 tag 值
-            int tag = byte2Int(byteCode, offset, u1);
+            int tag = byte2Int(byteCode, offset, U1);
 
             // 根据 tag 值判断，如果当前为 CONSTANT_UTF8_INFO，则判断是否为 oldStr
             if (tag == CONSTANT_UTF8_INFO) {
-                int len = byte2Int(byteCode, offset + u1, u2);
+                int len = byte2Int(byteCode, offset + U1, U2);
                 
                 // 偏移量添加 u1（tag）、u2（常量长度）
-                offset += u1 + u2;
+                offset += U1 + U2;
                 String str = byte2String(byteCode, offset, len);
                 if (str.equals(oldStr)) {
                     byte[] strReplaceBytes = string2Byte(newStr);
-                    byte[] intReplaceBytes = int2Byte(strReplaceBytes.length, u2);
+                    byte[] intReplaceBytes = int2Byte(strReplaceBytes.length, U2);
                     // 替换新的字符串的长度
-                    byteCode = byteReplace(byteCode, offset - u2, u2, intReplaceBytes);
+                    byteCode = byteReplace(byteCode, offset - U2, U2, intReplaceBytes);
                     // 替换字符串本身
                     byteCode = byteReplace(byteCode, offset, len, strReplaceBytes);
                     return byteCode;

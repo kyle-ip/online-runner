@@ -1,7 +1,5 @@
 package com.ywh.olrn.parser.classpath.entry;
 
-import com.ywh.olrn.parser.classpath.Entry;
-
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -12,6 +10,8 @@ import static com.ywh.olrn.constant.FileConstants.VAGUE;
 import static com.ywh.olrn.constant.FileConstants.PATH_SEPARATOR;
 
 /**
+ * 访问类路径（模糊匹配）
+ *
  * @author ywh
  * @since 2020/7/17 15:36
  */

@@ -1,5 +1,6 @@
 package com.ywh.olrn.parser.classpath;
 
+import com.ywh.olrn.parser.classpath.entry.Entry;
 import com.ywh.olrn.parser.classpath.entry.WildcardEntry;
 
 import java.io.File;
@@ -9,6 +10,8 @@ import static com.ywh.olrn.constant.FileConstants.PATH_SEPARATOR;
 import static com.ywh.olrn.constant.FileConstants.VAGUE;
 
 /**
+ * 搜索 Class 文件
+ *
  * @author ywh
  * @since 2020/7/17 18:17
  */
@@ -29,7 +32,7 @@ public class Classpath {
         }
     }
 
-    public byte[] readClass(String className) {
+    public byte[] readClass(String className) throws IOException {
         byte[] classInfo = this.bootClasspath.readClass(className);
         if (classInfo != null) {
             return classInfo;

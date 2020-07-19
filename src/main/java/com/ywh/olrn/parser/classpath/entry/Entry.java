@@ -1,9 +1,4 @@
-package com.ywh.olrn.parser.classpath;
-
-import com.ywh.olrn.parser.classpath.entry.CompositeEntry;
-import com.ywh.olrn.parser.classpath.entry.DirEntry;
-import com.ywh.olrn.parser.classpath.entry.WildcardEntry;
-import com.ywh.olrn.parser.classpath.entry.ZipEntry;
+package com.ywh.olrn.parser.classpath.entry;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,6 +6,8 @@ import java.io.IOException;
 import static com.ywh.olrn.constant.FileConstants.*;
 
 /**
+ * 访问类路径
+ *
  * @author ywh
  * @since 2020/7/17 15:34
  */
@@ -45,8 +42,8 @@ public abstract class Entry {
         return new DirEntry(path);
     }
 
-    public byte[] readClass(String className) {
-        throw null;
+    public byte[] readClass(String className) throws IOException {
+        throw new RuntimeException();
     }
 
     @Override

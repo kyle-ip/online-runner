@@ -23,8 +23,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * 自定义 Scanner 类：
- * 修改构造方法，其他几个方法返回类型修改为 CustomScanner
+ * 自定义 Scanner 类：修改构造方法，其他几个方法返回类型修改为 CustomScanner
+ *
+ * @author ywh
+ * @since 20/07/2020
  */
 public final class CustomScanner implements Iterator<String>, Closeable {
 

@@ -1,6 +1,7 @@
 package com.ywh.olrn.executor;
 
-import static com.ywh.olrn.util.ByteUtil.*;
+
+import static com.ywh.olrn.util.TypeUtils.*;
 
 /**
  * 字节码修改工具
@@ -53,7 +54,7 @@ public class ClassModifier {
      * @return
      */
     public int getConstantPoolCount() {
-        return byte2Int(byteCode, CONSTANT_POOL_COUNT_INDEX, U2);
+        return bytes2Int(byteCode, CONSTANT_POOL_COUNT_INDEX, U2);
     }
 
     /**
@@ -61,9 +62,8 @@ public class ClassModifier {
      *
      * @param oldStr
      * @param newStr
-     * @return 修改后的字节码字节数组
      */
-    public byte[] modifyUTF8Constant(String oldStr, String newStr) {
+    public void modifyUTF8Constant(String oldStr, String newStr) {
         // 注意常量数量计数器从 1 开始
         int cpc = getConstantPoolCount();
         // 真实的常量起始位置
@@ -73,11 +73,11 @@ public class ClassModifier {
         for (int i = 1; i < cpc; i++) {
 
             // 找到当前常量的 tag 值
-            int tag = byte2Int(byteCode, offset, U1);
+            int tag = bytes2Int(byteCode, offset, U1);
 
             // 根据 tag 值判断，如果当前为 CONSTANT_UTF8_INFO，则判断是否为 oldStr
             if (tag == CONSTANT_UTF8_INFO) {
-                int len = byte2Int(byteCode, offset + U1, U2);
+                int len = bytes2Int(byteCode, offset + U1, U2);
                 
                 // 偏移量添加 u1（tag）、u2（常量长度）
                 offset += U1 + U2;
@@ -89,7 +89,7 @@ public class ClassModifier {
                     byteCode = byteReplace(byteCode, offset - U2, U2, intReplaceBytes);
                     // 替换字符串本身
                     byteCode = byteReplace(byteCode, offset, len, strReplaceBytes);
-                    return byteCode;
+                    return;
                 } else {
                     offset += len;
                 }
@@ -97,7 +97,6 @@ public class ClassModifier {
                 offset += CONSTANT_ITEM_LENGTH[tag];
             }
         }
-        return byteCode;
     }
 
 }

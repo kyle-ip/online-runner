@@ -68,7 +68,7 @@ public class ByteCodeExecutor {
         Class<?> clazz = customClassLoader.loadByte(modifiedByteCode);
 
         // 设置用户传入的标准输入
-        ((CustomInputStream) CustomSystem.in).set(systemIn);
+        ((CustomInputStream) CustomSystem.IN).set(systemIn);
         // 反射执行类的 main 方法，获取执行结果
         try {
             Method mainMethod = clazz.getMethod("main", new Class[]{String[].class});
@@ -83,7 +83,7 @@ public class ByteCodeExecutor {
             log.error("", ex);
         } catch (InvocationTargetException ex) {
             log.error("", ex);
-            ex.getCause().printStackTrace(CustomSystem.err);
+            ex.getCause().printStackTrace(CustomSystem.ERR);
         }
         return null;
     }

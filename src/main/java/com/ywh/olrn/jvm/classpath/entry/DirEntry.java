@@ -1,14 +1,14 @@
 package com.ywh.olrn.jvm.classpath.entry;
 
 import com.ywh.olrn.jvm.classpath.BaseEntry;
-
 import java.io.IOException;
-
 import static com.ywh.olrn.constant.FileConstants.PATH_SEPARATOR;
 import static java.nio.file.Files.readAllBytes;
 import static java.nio.file.Paths.get;
 
 /**
+ * 访问类路径
+ *
  * @author ywh
  * @since 2020/7/17 15:36
  */

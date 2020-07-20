@@ -9,6 +9,8 @@ import java.util.List;
 import static com.ywh.olrn.constant.FileConstants.PATH_LIST_SEPARATOR;
 
 /**
+ * 访问类路径列表
+ *
  * @author ywh
  * @since 2020/7/17 15:36
  */

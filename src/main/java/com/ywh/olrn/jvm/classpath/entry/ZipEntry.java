@@ -1,7 +1,6 @@
 package com.ywh.olrn.jvm.classpath.entry;
 
 import com.ywh.olrn.jvm.classpath.BaseEntry;
-
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
@@ -10,6 +9,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.zip.ZipInputStream;
 
 /**
+ * 访问类路径（从压缩包）
+ *
  * @author ywh
  * @since 2020/7/17 15:36
  */

@@ -1,3 +1,5 @@
 spring:
   freemarker:
     suffix: .html
+  mvc:
+    static-path-pattern: /static/**

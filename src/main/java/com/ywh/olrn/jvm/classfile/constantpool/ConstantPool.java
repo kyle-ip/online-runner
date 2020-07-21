@@ -1,6 +1,4 @@
-package com.ywh.olrn.jvm.classfile;
-
-import com.ywh.olrn.jvm.classfile.constantpool.ConstantInfo;
+package com.ywh.olrn.jvm.classfile.constantpool;
 
 /**
  *

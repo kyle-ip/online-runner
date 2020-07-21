@@ -15,8 +15,7 @@ import com.ywh.olrn.jvm.classfile.basestruct.U1;
 import com.ywh.olrn.jvm.classfile.basestruct.U2;
 import com.ywh.olrn.jvm.classfile.basestruct.U4;
 import com.ywh.olrn.jvm.classfile.constantpool.*;
-import com.ywh.olrn.jvm.classpath.BaseEntry;
-import com.ywh.olrn.util.TypeUtils;
+import com.ywh.olrn.util.TypeUtils.*;
 
 import java.util.Arrays;
 
@@ -157,7 +156,7 @@ public class ClassFile {
 
         // 接口索引表
         interfaceCount = readU2();
-        int interfaceCountInteger = TypeUtils.byteArr2Int(interfaceCount.u2);
+        int interfaceCountInteger = byteArr2Int(interfaceCount.u2);
         interfaces = new U2[interfaceCountInteger];
         for (int i = 0; i < interfaceCountInteger; i++) {
             interfaces[i] = readU2();
@@ -165,17 +164,17 @@ public class ClassFile {
 
         // 字段表
         fieldCount = readU2();
-        int fieldCountInteger = TypeUtils.byteArr2Int(fieldCount.u2);
+        int fieldCountInteger = byteArr2Int(fieldCount.u2);
         fields = processFields(fieldCountInteger);
 
         // 方法表
         methodsCount = readU2();
-        int methodsCountInteger = TypeUtils.byteArr2Int(methodsCount.u2);
+        int methodsCountInteger = byteArr2Int(methodsCount.u2);
         methods = processMethods(methodsCountInteger);
 
         // 属性表
         attributesCount = readU2();
-        int tempAttributesCount = TypeUtils.byteArr2Int(attributesCount.u2);
+        int tempAttributesCount = byteArr2Int(attributesCount.u2);
         attributes = new AttributeBase[tempAttributesCount];
         for (int i = 0; i < tempAttributesCount; i++) {
             processAttribute(i, attributes);
@@ -196,7 +195,7 @@ public class ClassFile {
             methodInfos[i].nameIndex = readU2();
             methodInfos[i].descriptorIndex = readU2();
             methodInfos[i].attributeCount = readU2();
-            int tempAttributesCount = TypeUtils.byteArr2Int(methodInfos[i].attributeCount.u2);
+            int tempAttributesCount = byteArr2Int(methodInfos[i].attributeCount.u2);
             methodInfos[i].attributes = new AttributeBase[tempAttributesCount];
             for (int j = 0; j < tempAttributesCount; j++) {
                 processAttribute(j, methodInfos[i].attributes);
@@ -213,7 +212,7 @@ public class ClassFile {
             fieldInfos[i].nameIndex = readU2();
             fieldInfos[i].descriptorIndex = readU2();
             fieldInfos[i].attributeCount = readU2();
-            int tempAttributesCount = TypeUtils.byteArr2Int(fieldInfos[i].attributeCount.u2);
+            int tempAttributesCount = byteArr2Int(fieldInfos[i].attributeCount.u2);
             fieldInfos[i].attributes = new AttributeBase[tempAttributesCount];
             for (int j = 0; j < tempAttributesCount; j++) {
                 processAttribute(j, fieldInfos[i].attributes);
@@ -223,17 +222,17 @@ public class ClassFile {
     }
 
     private void processConstantPool() {
-        int poolSize = TypeUtils.byteArr2Int(constantPoolCount.u2);
+        int poolSize = byteArr2Int(constantPoolCount.u2);
         constantPool.cpInfo = new ConstantInfo[poolSize];
         for (int i = 0; i < poolSize - 1; i++) {
             U1 tag = readU1();
 
-            int integerTag = TypeUtils.byteArr2Int(tag.u1);
+            int integerTag = byteArr2Int(tag.u1);
             if (integerTag == 1) {
                 ConstantUtf8 constantUtf8 = new ConstantUtf8();
                 constantUtf8.tag = tag;
                 constantUtf8.length = readU2();
-                int utf8Len = TypeUtils.byteArr2Int(constantUtf8.length.u2);
+                int utf8Len = byteArr2Int(constantUtf8.length.u2);
                 constantUtf8.bytes = new U1[utf8Len];
                 for (int j = 0; j < utf8Len; j++) {
                     constantUtf8.bytes[j] = readU1();
@@ -363,35 +362,35 @@ public class ClassFile {
      */
     public void processAttribute(int index, AttributeBase[] attributes) {
         U2 attributesNameIndex = readU2();
-        int tempIndex = TypeUtils.byteArr2Int(attributesNameIndex.u2);
+        int tempIndex = byteArr2Int(attributesNameIndex.u2);
         ConstantInfo constantInfo = constantPool.cpInfo[tempIndex - 1];
         ConstantUtf8 constantUtf8 = (ConstantUtf8) constantInfo;
         if (constantUtf8.tag.u1[0] != 0x1) {
             return;
         }
 
-        String s = TypeUtils.u12String(constantUtf8.bytes);
-        if (TypeUtils.compare(s, attributeStrs[0])) {
+        String s = u12String(constantUtf8.bytes);
+        if (compare(s, attributeStrs[0])) {
             ConstantValueAttribute constantValue = new ConstantValueAttribute();
             constantValue.attributeNameIndex = attributesNameIndex;
             /*恒等于2*/
             constantValue.attributeLength = readU4();
             constantValue.constantvalueIndex = readU2();
             attributes[index] = constantValue;
-        } else if (TypeUtils.compare(s, attributeStrs[1])) {
+        } else if (compare(s, attributeStrs[1])) {
             CodeAttribute codeAttribute = new CodeAttribute();
             codeAttribute.attributeNameIndex = attributesNameIndex;
             codeAttribute.attributeLength = readU4();
             codeAttribute.maxStack = readU2();
             codeAttribute.maxLocals = readU2();
             codeAttribute.codeLength = readU4();
-            int len = TypeUtils.byteArr2Int(codeAttribute.codeLength.u4);
+            int len = byteArr2Int(codeAttribute.codeLength.u4);
             codeAttribute.code = new U1[len];
             for (int i = 0; i < len; i++) {
                 codeAttribute.code[i] = readU1();
             }
             codeAttribute.exceptionTableLength = readU2();
-            len = TypeUtils.byteArr2Int(codeAttribute.exceptionTableLength.u2);
+            len = byteArr2Int(codeAttribute.exceptionTableLength.u2);
             codeAttribute.exceptionTables = new ExceptionTable[len];
             for (int i = 0; i < len; i++) {
                 codeAttribute.exceptionTables[i] = new ExceptionTable();
@@ -401,36 +400,36 @@ public class ClassFile {
                 codeAttribute.exceptionTables[i].catchType = readU2();
             }
             codeAttribute.attributeCount = readU2();
-            int tempAttributesCount = TypeUtils.byteArr2Int(codeAttribute.attributeCount.u2);
+            int tempAttributesCount = byteArr2Int(codeAttribute.attributeCount.u2);
             codeAttribute.attributes = new AttributeBase[tempAttributesCount];
             for (int i = 0; i < tempAttributesCount; i++) {
 
                 processAttribute(i, codeAttribute.attributes);
             }
             attributes[index] = codeAttribute;
-        } else if (TypeUtils.compare(s, attributeStrs[2])) {
+        } else if (compare(s, attributeStrs[2])) {
             /* https://hllvm-group.iteye.com/group/topic/26545 */
             StackMapTableAttribute stackMapTableAttribute = new StackMapTableAttribute();
             stackMapTableAttribute.attributeNameIndex = attributesNameIndex;
             processStackMapTable(stackMapTableAttribute);
             attributes[index] = stackMapTableAttribute;
-        } else if (TypeUtils.compare(s, attributeStrs[3])) {
+        } else if (compare(s, attributeStrs[3])) {
             ExceptionsAttribute exceptionsAttribute = new ExceptionsAttribute();
             exceptionsAttribute.attributeNameIndex = attributesNameIndex;
             exceptionsAttribute.attributeLength = readU4();
             exceptionsAttribute.numberOfExceptions = readU2();
-            int exceptionSize = TypeUtils.byteArr2Int(exceptionsAttribute.numberOfExceptions.u2);
+            int exceptionSize = byteArr2Int(exceptionsAttribute.numberOfExceptions.u2);
             exceptionsAttribute.exceptionIndexTable = new U2[exceptionSize];
             for (int j = 0; j < exceptionSize; j++) {
                 exceptionsAttribute.exceptionIndexTable[j] = readU2();
             }
             attributes[index] = exceptionsAttribute;
-        } else if (TypeUtils.compare(s, attributeStrs[4])) {
+        } else if (compare(s, attributeStrs[4])) {
             InnerClassesAttribute innerClassesAttribute = new InnerClassesAttribute();
             innerClassesAttribute.attributeNameIndex = attributesNameIndex;
             innerClassesAttribute.attributeLength = readU4();
             innerClassesAttribute.numberOfClasses = readU2();
-            int classesSize = TypeUtils.byteArr2Int(innerClassesAttribute.numberOfClasses.u2);
+            int classesSize = byteArr2Int(innerClassesAttribute.numberOfClasses.u2);
             innerClassesAttribute.classes = new Classes[classesSize];
             for (int j = 0; j < classesSize; j++) {
                 innerClassesAttribute.classes[j] = new Classes();
@@ -440,46 +439,46 @@ public class ClassFile {
                 innerClassesAttribute.classes[j].innerClassAccessFlags = readU2();
             }
             attributes[index] = innerClassesAttribute;
-        } else if (TypeUtils.compare(s, attributeStrs[5])) {
+        } else if (compare(s, attributeStrs[5])) {
             EnclosingMethodAttribute enclosingMethodAttribute = new EnclosingMethodAttribute();
             enclosingMethodAttribute.attributeNameIndex = attributesNameIndex;
             enclosingMethodAttribute.attributeLength = readU4();
             enclosingMethodAttribute.classIndex = readU2();
             enclosingMethodAttribute.classIndex = readU2();
             attributes[index] = enclosingMethodAttribute;
-        } else if (TypeUtils.compare(s, attributeStrs[6])) {
+        } else if (compare(s, attributeStrs[6])) {
             SyntheticAttribute syntheticAttribute = new SyntheticAttribute();
             syntheticAttribute.attributeNameIndex = attributesNameIndex;
             syntheticAttribute.attributeLength = readU4();
             attributes[index] = syntheticAttribute;
-        } else if (TypeUtils.compare(s, attributeStrs[7])) {
+        } else if (compare(s, attributeStrs[7])) {
             SignatureAttribute signatureAttribute = new SignatureAttribute();
             signatureAttribute.attributeNameIndex = attributesNameIndex;
             signatureAttribute.attributeLength = readU4();
             signatureAttribute.signatureIndex = readU2();
             attributes[index] = signatureAttribute;
-        } else if (TypeUtils.compare(s, attributeStrs[8])) {
+        } else if (compare(s, attributeStrs[8])) {
             SourceFileAttribute sourceFileAttribute = new SourceFileAttribute();
             sourceFileAttribute.attributeNameIndex = attributesNameIndex;
             sourceFileAttribute.attributeLength = readU4();
             sourceFileAttribute.sourcefileIndex = readU2();
             attributes[index] = sourceFileAttribute;
-        } else if (TypeUtils.compare(s, attributeStrs[9])) {
+        } else if (compare(s, attributeStrs[9])) {
             SourceDebugExtensionAttribute sourceDebugExtensionAttribute = new SourceDebugExtensionAttribute();
             sourceDebugExtensionAttribute.attributeNameIndex = attributesNameIndex;
             sourceDebugExtensionAttribute.attributeLength = readU4();
-            int debugSize = TypeUtils.byteArr2Int(sourceDebugExtensionAttribute.attributeLength.u4);
+            int debugSize = byteArr2Int(sourceDebugExtensionAttribute.attributeLength.u4);
             sourceDebugExtensionAttribute.debugExtension = new U1[debugSize];
             for (int j = 0; j < debugSize; j++) {
                 sourceDebugExtensionAttribute.debugExtension[j] = readU1();
             }
             attributes[index] = sourceDebugExtensionAttribute;
-        } else if (TypeUtils.compare(s, attributeStrs[10])) {
+        } else if (compare(s, attributeStrs[10])) {
             LineNumberTableAttribute lineNumberTableAttribute = new LineNumberTableAttribute();
             lineNumberTableAttribute.attributeNameIndex = attributesNameIndex;
             lineNumberTableAttribute.attributeLength = readU4();
             lineNumberTableAttribute.lineNumberTableLength = readU2();
-            int lineNumberSize = TypeUtils.byteArr2Int(lineNumberTableAttribute.lineNumberTableLength.u2);
+            int lineNumberSize = byteArr2Int(lineNumberTableAttribute.lineNumberTableLength.u2);
             lineNumberTableAttribute.lineNumbers = new LineNumber[lineNumberSize];
             for (int j = 0; j < lineNumberSize; j++) {
                 lineNumberTableAttribute.lineNumbers[j] = new LineNumber();
@@ -487,12 +486,12 @@ public class ClassFile {
                 lineNumberTableAttribute.lineNumbers[j].lineNumber = readU2();
             }
             attributes[index] = lineNumberTableAttribute;
-        } else if (TypeUtils.compare(s, attributeStrs[11])) {
+        } else if (compare(s, attributeStrs[11])) {
             LocalVariableTableAttribute localVariableTableAttribute = new LocalVariableTableAttribute();
             localVariableTableAttribute.attributeNameIndex = attributesNameIndex;
             localVariableTableAttribute.attributeLength = readU4();
             localVariableTableAttribute.localVariableTableLength = readU2();
-            int localVariableSize = TypeUtils.byteArr2Int(localVariableTableAttribute.localVariableTableLength.u2);
+            int localVariableSize = byteArr2Int(localVariableTableAttribute.localVariableTableLength.u2);
             localVariableTableAttribute.localVariables = new LocalVariable[localVariableSize];
             for (int j = 0; j < localVariableSize; j++) {
                 LocalVariable localVariable = new LocalVariable();
@@ -504,13 +503,13 @@ public class ClassFile {
                 localVariableTableAttribute.localVariables[j] = localVariable;
             }
             attributes[index] = localVariableTableAttribute;
-        } else if (TypeUtils.compare(s, attributeStrs[12])) {
+        } else if (compare(s, attributeStrs[12])) {
             LocalVariableTypeTableAttribute localVariableTypeTable = new LocalVariableTypeTableAttribute();
             localVariableTypeTable.attributeNameIndex = attributesNameIndex;
             localVariableTypeTable.attributeLength = readU4();
             localVariableTypeTable.localVariableTypeTableLength = readU2();
             int localVariableTypeSize =
-                TypeUtils.byteArr2Int(localVariableTypeTable.localVariableTypeTableLength.u2);
+                byteArr2Int(localVariableTypeTable.localVariableTypeTableLength.u2);
             localVariableTypeTable.localVariableTypes = new LocalVariableType[localVariableTypeSize];
             for (int j = 0; j < localVariableTypeSize; j++) {
                 LocalVariableType localVariableType = new LocalVariableType();
@@ -522,54 +521,54 @@ public class ClassFile {
                 localVariableTypeTable.localVariableTypes[j] = localVariableType;
             }
             attributes[index] = localVariableTypeTable;
-        } else if (TypeUtils.compare(s, attributeStrs[13])) {
+        } else if (compare(s, attributeStrs[13])) {
             DeprecatedAttribute deprecatedAttribute = new DeprecatedAttribute();
             deprecatedAttribute.attributeNameIndex = attributesNameIndex;
             deprecatedAttribute.attributeLength = readU4();
             attributes[index] = deprecatedAttribute;
-        } else if (TypeUtils.compare(s, attributeStrs[14])) {
+        } else if (compare(s, attributeStrs[14])) {
             RuntimeVisibleAnnotationsAttribute runtimeVisibleAnnotations = new RuntimeVisibleAnnotationsAttribute();
             runtimeVisibleAnnotations.attributeNameIndex = attributesNameIndex;
             runtimeVisibleAnnotations.attributeLength = readU4();
             runtimeVisibleAnnotations.numAnnotations = readU2();
-            int annotationsSize = TypeUtils.byteArr2Int(runtimeVisibleAnnotations.numAnnotations.u2);
+            int annotationsSize = byteArr2Int(runtimeVisibleAnnotations.numAnnotations.u2);
             runtimeVisibleAnnotations.annotations = new Annotation[annotationsSize];
             for (int j = 0; j < annotationsSize; j++) {
                 Annotation annotation = runtimeVisibleAnnotations.annotations[j] = new Annotation();
                 processAnnotation(annotation);
             }
             attributes[index] = runtimeVisibleAnnotations;
-        } else if (TypeUtils.compare(s, attributeStrs[15])) {
+        } else if (compare(s, attributeStrs[15])) {
             RuntimeInvisibleAnnotationsAttribute runtimeInvisibleAnnotations =
                 new RuntimeInvisibleAnnotationsAttribute();
             runtimeInvisibleAnnotations.attributeNameIndex = attributesNameIndex;
             runtimeInvisibleAnnotations.attributeLength = readU4();
             runtimeInvisibleAnnotations.numAnnotations = readU2();
-            int annotationsSize = TypeUtils.byteArr2Int(runtimeInvisibleAnnotations.numAnnotations.u2);
+            int annotationsSize = byteArr2Int(runtimeInvisibleAnnotations.numAnnotations.u2);
             for (int j = 0; j < annotationsSize; j++) {
                 Annotation annotation = runtimeInvisibleAnnotations.annotations[j];
                 processAnnotation(annotation);
             }
             attributes[index] = runtimeInvisibleAnnotations;
-        } else if (TypeUtils.compare(s, attributeStrs[16])) {
+        } else if (compare(s, attributeStrs[16])) {
             RuntimeVisibleParameterAnnotationsAttribute runtimeVisibleParameterAnnotations =
                 new RuntimeVisibleParameterAnnotationsAttribute();
             runtimeVisibleParameterAnnotations.attributeNameIndex = attributesNameIndex;
             runtimeVisibleParameterAnnotations.attributeLength = readU4();
             runtimeVisibleParameterAnnotations.numParameters = readU1();
-            int parametersSize = TypeUtils.byteArr2Int(runtimeVisibleParameterAnnotations.numParameters.u1);
+            int parametersSize = byteArr2Int(runtimeVisibleParameterAnnotations.numParameters.u1);
             for (int j = 0; j < parametersSize; j++) {
                 ParameterAnnotation parameterAnnotation = runtimeVisibleParameterAnnotations.parameterAnnotations[j];
                 processParameterAnnotation(parameterAnnotation);
             }
             attributes[index] = runtimeVisibleParameterAnnotations;
-        } else if (TypeUtils.compare(s, attributeStrs[17])) {
+        } else if (compare(s, attributeStrs[17])) {
             RuntimeInvisibleParameterAnnotationsAttribute runtimeInvisibleParameterAnnotations =
                 new RuntimeInvisibleParameterAnnotationsAttribute();
             runtimeInvisibleParameterAnnotations.attributeNameIndex = attributesNameIndex;
             runtimeInvisibleParameterAnnotations.attributeLength = readU4();
             runtimeInvisibleParameterAnnotations.numParameters = readU1();
-            int parametersSize = TypeUtils.byteArr2Int(runtimeInvisibleParameterAnnotations.numParameters.u1);
+            int parametersSize = byteArr2Int(runtimeInvisibleParameterAnnotations.numParameters.u1);
             for (int j = 0; j < parametersSize; j++) {
                 ParameterAnnotation parameterAnnotation = runtimeInvisibleParameterAnnotations.parameterAnnotations[j];
                 processParameterAnnotation(parameterAnnotation);
@@ -577,29 +576,29 @@ public class ClassFile {
             attributes[index] = runtimeInvisibleParameterAnnotations;
 
             /*java8增加 RuntimeVisibleTypeAnnotationsAttribute*/
-        } else if (TypeUtils.compare(s, attributeStrs[18])) {
+        } else if (compare(s, attributeStrs[18])) {
 
             /*java8增加 RuntimeInvisibleTypeAnnotationsAttribute*/
-        } else if (TypeUtils.compare(s, attributeStrs[19])) {
+        } else if (compare(s, attributeStrs[19])) {
 
-        } else if (TypeUtils.compare(s, attributeStrs[20])) {
+        } else if (compare(s, attributeStrs[20])) {
             AnnotationDefaultAttribute annotationDefault = new AnnotationDefaultAttribute();
             annotationDefault.attributeNameIndex = attributesNameIndex;
             annotationDefault.attributeLength = readU4();
             annotationDefault.defaultValue = processElementValue();
             attributes[index] = annotationDefault;
-        } else if (TypeUtils.compare(s, attributeStrs[21])) {
+        } else if (compare(s, attributeStrs[21])) {
             BootstrapMethodsAttribute bootstrapMethods = new BootstrapMethodsAttribute();
             bootstrapMethods.attributeNameIndex = attributesNameIndex;
             bootstrapMethods.attributeLength = readU4();
             bootstrapMethods.numBootstrapMethods = readU2();
-            int bootstrapMethodsSize = TypeUtils.byteArr2Int(bootstrapMethods.numBootstrapMethods.u2);
+            int bootstrapMethodsSize = byteArr2Int(bootstrapMethods.numBootstrapMethods.u2);
             bootstrapMethods.bootstrapMethods = new BootstrapMethod[bootstrapMethodsSize];
             for (int j = 0; j < bootstrapMethodsSize; j++) {
                 BootstrapMethod bootstrapMethod = new BootstrapMethod();
                 bootstrapMethod.bootstrapMethodRef = readU2();
                 bootstrapMethod.numBootstrapArguments = readU2();
-                int argumentsSize = TypeUtils.byteArr2Int(bootstrapMethod.numBootstrapArguments.u2);
+                int argumentsSize = byteArr2Int(bootstrapMethod.numBootstrapArguments.u2);
                 bootstrapMethod.bootstrapArguments = new U2[argumentsSize];
                 for (int k = 0; k < argumentsSize; k++) {
                     bootstrapMethod.bootstrapArguments[k] = readU2();
@@ -609,14 +608,14 @@ public class ClassFile {
             attributes[index] = bootstrapMethods;
 
             /*java8增加 MethodParametersAttribute*/
-        } else if (TypeUtils.compare(s, attributeStrs[22])) {
+        } else if (compare(s, attributeStrs[22])) {
 
         }
     }
 
     void processParameterAnnotation(ParameterAnnotation parameterAnnotation) {
         parameterAnnotation.numAnnotations = readU2();
-        int annotationsSize = TypeUtils.byteArr2Int(parameterAnnotation.numAnnotations.u2);
+        int annotationsSize = byteArr2Int(parameterAnnotation.numAnnotations.u2);
         parameterAnnotation.annotations = new Annotation[annotationsSize];
         for (int k = 0; k < annotationsSize; k++) {
             parameterAnnotation.annotations[k] = new Annotation();
@@ -627,7 +626,7 @@ public class ClassFile {
     void processAnnotation(Annotation annotation) {
         annotation.typeIndex = readU2();
         annotation.numElementValuePairs = readU2();
-        int pairsSize = TypeUtils.byteArr2Int(annotation.numElementValuePairs.u2);
+        int pairsSize = byteArr2Int(annotation.numElementValuePairs.u2);
         annotation.elementValuePairs = new ElementValuePair[pairsSize];
         for (int k = 0; k < pairsSize; k++) {
             annotation.elementValuePairs[k] = new ElementValuePair();
@@ -643,7 +642,7 @@ public class ClassFile {
     ElementValue processElementValue() {
         ElementValue elementValue = null;
         U1 elementValueTag = readU1();
-        int tagInteger = TypeUtils.byteArr2Int(elementValueTag.u1);
+        int tagInteger = byteArr2Int(elementValueTag.u1);
 
         if (Integer.valueOf('B').equals(tagInteger)
             || Integer.valueOf('C').equals(tagInteger)
@@ -679,7 +678,7 @@ public class ClassFile {
             ArrayValue arrayValue = new ArrayValue();
             arrayValue.tag = elementValueTag;
             arrayValue.numValues = readU2();
-            int numValueInteger = TypeUtils.byteArr2Int(arrayValue.numValues.u2);
+            int numValueInteger = byteArr2Int(arrayValue.numValues.u2);
             ElementValue[] elementValues = new ElementValue[numValueInteger];
             for (int i = 0; i < numValueInteger; i++) {
                 elementValues[i] = processElementValue();
@@ -694,12 +693,12 @@ public class ClassFile {
     void processStackMapTable(StackMapTableAttribute stackMapTableAttribute) {
         stackMapTableAttribute.attributeLength = readU4();
         stackMapTableAttribute.numberOfEntries = readU2();
-        int len = TypeUtils.byteArr2Int(stackMapTableAttribute.numberOfEntries.u2);
+        int len = byteArr2Int(stackMapTableAttribute.numberOfEntries.u2);
         stackMapTableAttribute.entries = new StackMapFrame[len];
         for (int i = 0; i < len; i++) {
             // stackMapTable_attribute.entries[i];
             U1 frameTag = readU1();
-            int frameTagInteger = TypeUtils.byteArr2Int(frameTag.u1);
+            int frameTagInteger = byteArr2Int(frameTag.u1);
             /* 128 至 246是预留的*/
             /*SameFrame */
             if (frameTagInteger >= 0 && frameTagInteger <= 63) {
@@ -760,7 +759,7 @@ public class ClassFile {
                 fullFrame.frameType = frameTag;
                 fullFrame.offsetDelta = readU2();
                 fullFrame.numberOfLocals = readU2();
-                int localsSize = TypeUtils.byteArr2Int(fullFrame.numberOfLocals.u2);
+                int localsSize = byteArr2Int(fullFrame.numberOfLocals.u2);
                 fullFrame.locals = new VerificationTypeInfo[localsSize];
                 for (int j = 0; j < localsSize; j++) {
                     U1 verificationTypeTag = readU1();
@@ -768,7 +767,7 @@ public class ClassFile {
                 }
 
                 fullFrame.numberOfStackItems = readU2();
-                int stackItemsSize = TypeUtils.byteArr2Int(fullFrame.numberOfStackItems.u2);
+                int stackItemsSize = byteArr2Int(fullFrame.numberOfStackItems.u2);
                 fullFrame.stack = new VerificationTypeInfo[stackItemsSize];
                 for (int j = 0; j < stackItemsSize; j++) {
                     U1 verificationTypeTag = readU1();
@@ -781,7 +780,7 @@ public class ClassFile {
     }
 
     VerificationTypeInfo getVerificationTypeTag(U1 tag) {
-        int tagInteger = TypeUtils.byteArr2Int(tag.u1);
+        int tagInteger = byteArr2Int(tag.u1);
         if (tagInteger == 0) {
             TopVariableInfo topVariableInfo = new TopVariableInfo();
             topVariableInfo.tag = tag;
@@ -904,7 +903,7 @@ public class ClassFile {
     public static void main(String[] args) throws Exception {
         String sourceCode = ""
             + "public class Run {\n"
-            + " private static final long serialVersionUID = -6849794470754667710L; \n"
+            + "    private static final long serialVersionUID = -6849794470754667710L; \n"
             + "    public static void main(String[] args) {\n"
             + "        System.out.println(\"Hello, World!\");\n"
             + "    }\n"

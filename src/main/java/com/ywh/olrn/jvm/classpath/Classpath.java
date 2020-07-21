@@ -1,74 +1,89 @@
 package com.ywh.olrn.jvm.classpath;
 
-import com.ywh.olrn.jvm.classpath.entry.WildcardEntry;
-
 import java.io.File;
-import java.io.IOException;
-
-import static com.ywh.olrn.constant.FileConstants.PATH_SEPARATOR;
-import static com.ywh.olrn.constant.FileConstants.VAGUE;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 /**
- * 搜索 Class 文件
  *
  * @author ywh
- * @since 2020/7/17 18:17
+ * @since 21/07/2020
  */
 public class Classpath {
 
-    private BaseEntry bootClasspath;
+    private Entry bootClasspath;
 
-    private BaseEntry extClasspath;
+    private Entry extClasspath;
 
-    private BaseEntry userClasspath;
+    private Entry userClasspath;
 
-    public Classpath(String cpOption, String jreOption) {
-        try {
-            parseUserClasspath(cpOption);
-            parseBootAndExtClasspath(jreOption);
-        } catch (IOException ignored) {
-
-        }
+    public Classpath(String jreOption, String cpOption) {
+        parseBootAndExtClasspath(jreOption);
+        parseUserClasspath(cpOption);
     }
 
-    public byte[] readClass(String className) throws IOException {
-        byte[] classInfo = this.bootClasspath.readClass(className);
-        if (classInfo != null) {
-            return classInfo;
-        }
-        classInfo = this.extClasspath.readClass(className);
-        if (classInfo != null) {
-            return classInfo;
-        }
-        return this.userClasspath.readClass(className);
-    }
-
-    private void parseUserClasspath(String cpOption) throws IOException {
-        if (cpOption == null || cpOption.isEmpty()) {
-            cpOption = ".";
-        }
-        this.userClasspath = BaseEntry.newEntry(cpOption);
-    }
-
-    private void parseBootAndExtClasspath(String jreOption) throws IOException {
+    private void parseBootAndExtClasspath(String jreOption) {
         String jreDir = getJreDir(jreOption);
-        String jreLibPath = String.join(PATH_SEPARATOR, jreDir, "lib", VAGUE);
-        this.bootClasspath = new WildcardEntry(jreLibPath);
-        String jreExtPath = String.join(PATH_SEPARATOR, jreDir, "lib", "ext", VAGUE);
-        this.extClasspath = new WildcardEntry(jreExtPath);
+
+        // jre/lib/*
+        String jreLibPath = Paths.get(jreDir, "lib") + File.separator + "*";
+        bootClasspath = new WildcardEntry(jreLibPath);
+
+        // jre/lib/ext/*
+        String jreExtPath = Paths.get(jreDir, "lib", "ext") + File.separator + "*";
+        extClasspath = new WildcardEntry(jreExtPath);
     }
 
-    private String getJreDir(String jreOption) {
-        if (jreOption != null && jreOption.length() != 0) {
+    private static String getJreDir(String jreOption) {
+        if (jreOption != null && Files.exists(Paths.get(jreOption))) {
             return jreOption;
         }
-        if (new File("./jre").exists()) {
-            return new File("./jre").getAbsolutePath();
+        if (Files.exists(Paths.get("./jre"))) {
+            return "./jre";
         }
-        String javaHome = System.getenv().get("JAVA_HOME");
-        if (javaHome != null) {
-            return String.join(PATH_SEPARATOR, javaHome, "jre");
+        String jh = System.getenv("JAVA_HOME");
+        if (jh != null) {
+            return Paths.get(jh, "jre").toString();
         }
-        throw new RuntimeException("Can't find jre dir!");
+        throw new RuntimeException("Can not find JRE folder!");
     }
+
+    private void parseUserClasspath(String cpOption) {
+        if (cpOption == null) {
+            cpOption = ".";
+        }
+        userClasspath = Entry.create(cpOption);
+    }
+
+    // className: fully/qualified/ClassName
+    public byte[] readClass(String className) throws Exception {
+        className = className + ".class";
+
+        try {
+            return bootClasspath.readClass(className);
+        } catch (Exception ignored) {
+
+        }
+
+        try {
+            return bootClasspath.readClass(className);
+        } catch (Exception ignored) {
+
+        }
+
+        return userClasspath.readClass(className);
+    }
+
+
+    public static String join(String... paths) {
+        return Arrays.stream(paths)
+                .collect(Collectors.joining(File.pathSeparator));
+    }
+
+    public static String[] split(String pathList) {
+        return pathList.split(File.pathSeparator);
+    }
+
 }

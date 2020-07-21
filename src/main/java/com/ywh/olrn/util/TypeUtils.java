@@ -1,6 +1,5 @@
 package com.ywh.olrn.util;
 
-import com.ywh.olrn.jvm.classfile.basestruct.U1;
 
 /**
  * 类型转换工具类
@@ -166,20 +165,20 @@ public class TypeUtils {
         return str.getBytes();
     }
 
-    /**
-     * U1[] to String
-     *
-     * @param bytes
-     * @return
-     */
-    static public String u12String(U1[] bytes) {
-        int size = bytes.length;
-        char[] res = new char[size];
-        for (int i = 0; i < size; i++) {
-            res[i] = (char) bytes[i].u1[0];
-        }
-        return String.valueOf(res);
-    }
+//    /**
+//     * U1[] to String
+//     *
+//     * @param bytes
+//     * @return
+//     */
+//    static public String u12String(U1[] bytes) {
+//        int size = bytes.length;
+//        char[] res = new char[size];
+//        for (int i = 0; i < size; i++) {
+//            res[i] = (char) bytes[i].u1[0];
+//        }
+//        return String.valueOf(res);
+//    }
 
     /**
      * @param s
